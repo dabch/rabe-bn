@@ -18,7 +18,7 @@ use serde::ser::Serialize;
 use serde::de::DeserializeOwned;
 use core::fmt;
 
-#[derive(Copy, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Copy, Clone, PartialEq, Eq, Serialize, Deserialize, Debug)]
 #[repr(C)]
 pub struct Fr(fields::Fr);
 
@@ -79,6 +79,16 @@ impl Mul for Fr {
     }
 }
 
+impl From<u64> for Fr {
+    fn from(val: u64) -> Self {
+        let mut acc = Fr::zero();
+        for _ in 0..val {
+            acc = acc + Fr::one();
+        }
+        acc
+    }
+}
+
 impl Distribution<crate::fields::Fr> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> crate::fields::Fr {
         let random_bytes: Vec<u8> = (0..64).map(|_| { rng.gen::<u8>() }).collect();
@@ -115,7 +125,7 @@ pub trait Group
     fn normalize(&mut self);
 }
 
-#[derive(Copy, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Copy, Clone, PartialEq, Eq, Serialize, Deserialize, Debug)]
 #[repr(C)]
 pub struct G1(groups::G1);
 
@@ -180,7 +190,7 @@ impl Distribution<G1> for Standard {
     }
 }
 
-#[derive(Copy, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Copy, Clone, PartialEq, Eq, Serialize, Deserialize, Debug)]
 #[repr(C)]
 pub struct G2(groups::G2);
 
@@ -245,7 +255,7 @@ impl Distribution<G2> for Standard {
     }
 }
 
-#[derive(Copy, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Copy, Clone, PartialEq, Eq, Serialize, Deserialize, Debug)]
 #[repr(C)]
 pub struct Gt(fields::Fq12);
 
