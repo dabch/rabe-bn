@@ -4,6 +4,7 @@ use super::FieldElement;
 
 use arith::{U512, U256};
 use core::fmt;
+use byteorder::{ByteOrder, LittleEndian};
 
 macro_rules! field_impl {
     ($name:ident, $modulus:expr, $rsquared:expr, $rcubed:expr, $one:expr, $inv:expr) => {
@@ -161,6 +162,17 @@ macro_rules! field_impl {
         impl fmt::Display for $name {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
                 write!(f, "{}", self.0)
+            }
+        }
+
+        impl From<$name> for [u8; 8 * 4] {
+            fn from(from_: $name) -> [u8; 8 * 4] {
+                let mut res: [u8; 8 * 4] = [0; 8 * 4];
+                let $name(u256) = from_;
+                for (i, x) in u256.0.iter().enumerate() {
+                    LittleEndian::write_u64(&mut res[i*8 .. (i+1)*8], *x);
+                }
+                res
             }
         }
 

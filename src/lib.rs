@@ -18,6 +18,8 @@ use serde::ser::Serialize;
 use serde::de::DeserializeOwned;
 use core::fmt;
 
+pub use fields::Fq;
+
 #[derive(Copy, Clone, PartialEq, Eq, Serialize, Deserialize, Debug)]
 #[repr(C)]
 pub struct Fr(fields::Fr);
@@ -123,11 +125,23 @@ pub trait Group
     fn random<R: Rng>(rng: &mut R) -> Self;
     fn is_zero(&self) -> bool;
     fn normalize(&mut self);
+    // fn coords() -> (Fr, Fr);
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, Serialize, Deserialize, Debug)]
 #[repr(C)]
 pub struct G1(groups::G1);
+
+impl G1 {
+    pub fn coordinates(&self) -> (Fq, Fq) {
+        self.0.to_affine();
+        match self.0.to_affine() {
+            None => return (Fq::one(), Fq::one()),
+            Some(a) => return a.coordinates(),
+        }
+    }
+}
+
 
 impl Group for G1 {
     fn zero() -> Self {
@@ -150,6 +164,7 @@ impl Group for G1 {
 
         self.0 = new.to_jacobian();
     }
+
 }
 
 impl Add<G1> for G1 {

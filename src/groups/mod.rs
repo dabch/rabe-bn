@@ -50,6 +50,12 @@ pub struct AffineG<P: GroupParams> {
     y: P::Base,
 }
 
+impl<P: GroupParams> AffineG<P> {
+    pub fn coordinates(&self) -> (P::Base, P::Base) {
+        (self.x, self.y)
+    }
+}
+
 impl<P: GroupParams> PartialEq for AffineG<P> {
     fn eq(&self, other: &Self) -> bool {
         self.x == other.x && self.y == other.y
