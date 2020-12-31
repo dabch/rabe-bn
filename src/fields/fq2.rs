@@ -1,5 +1,5 @@
 use fields::{FieldElement, const_fq, Fq};
-use std::ops::{Add, Sub, Mul, Neg};
+use core::ops::{Add, Sub, Mul, Neg};
 use rand::Rng;
 use core::fmt;
 

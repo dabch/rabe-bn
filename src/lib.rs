@@ -1,9 +1,22 @@
+#![no_std]
+#[cfg(feature = "alloc")]
+extern crate alloc;
+#[cfg(any(feature = "std", test))]
+extern crate std;
+
+#[cfg(feature = "alloc")]
+use alloc::vec::Vec;
+
+#[cfg(not(feature = "alloc"))]
+extern crate heapless;
+
+
 #[macro_use]
 extern crate serde_derive;
 extern crate serde;
 extern crate rand;
 extern crate byteorder;
-extern crate core;
+// extern crate core;
 
 mod arith;
 mod fields;
@@ -11,12 +24,12 @@ mod groups;
 
 use fields::FieldElement;
 use groups::GroupElement;
-use std::ops::{Add, Sub, Mul, Neg};
+use core::ops::{Add, Sub, Mul, Neg};
 use rand::{Rng, distributions::{Distribution, Standard}, thread_rng};
 
 use serde::ser::Serialize;
 use serde::de::DeserializeOwned;
-use core::fmt;
+use core::fmt::{self, Debug};
 
 pub use fields::Fq;
 
@@ -35,6 +48,7 @@ impl Fr {
     pub fn pow(&self, exp: Fr) -> Self {
         Fr(self.0.pow(exp.0))
     }
+    #[cfg(feature = "alloc")]
     pub fn from_str(s: &str) -> Option<Self> {
         fields::Fr::from_str(s).map(|e| Fr(e))
     }
@@ -93,14 +107,22 @@ impl From<u64> for Fr {
 
 impl Distribution<crate::fields::Fr> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> crate::fields::Fr {
+        #[cfg(feature = "alloc")]
         let random_bytes: Vec<u8> = (0..64).map(|_| { rng.gen::<u8>() }).collect();
+        #[cfg(not(feature = "alloc"))]
+        let random_bytes: heapless::Vec<u8, heapless::consts::U64> = (0..64).map(|_| { rng.gen::<u8>() }).collect();
+
         crate::fields::Fr::interpret(&pop(random_bytes.as_ref()))
     }
 }
 
+
 impl Distribution<Fr> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Fr {
+        #[cfg(feature = "alloc")]
         let random_bytes: Vec<u8> = (0..64).map(|_| { rng.gen::<u8>() }).collect();
+        #[cfg(not(feature = "alloc"))]
+        let random_bytes: heapless::Vec<u8, heapless::consts::U64> = (0..64).map(|_| { rng.gen::<u8>() }).collect();
         Fr::interpret(&pop(random_bytes.as_ref()))
     }
 }
@@ -316,11 +338,11 @@ impl fmt::Display for Gt {
     }
 }
 
-impl std::convert::From<Gt> for Vec<u8> {
-    fn from(elem: Gt) -> Self {
-        format!("{}", elem).into_bytes()
-    }
-}
+// impl std::convert::From<Gt> for Vec<u8> {
+//     fn from(elem: Gt) -> Self {
+//         format!("{}", elem).into_bytes()
+//     }
+// }
 
 fn pop(barry: &[u8]) -> [u8; 64] {
     let mut array = [0u8; 64];

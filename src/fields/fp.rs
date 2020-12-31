@@ -1,5 +1,11 @@
+#[cfg(feature = "alloc")]
+pub use alloc::vec::Vec;
+
+#[cfg(not(feature = "alloc"))]
+extern crate heapless;
+
 use rand::Rng;
-use std::ops::{Add, Sub, Mul, Neg};
+use core::ops::{Add, Sub, Mul, Neg};
 use super::FieldElement;
 
 use arith::{U512, U256};
@@ -39,8 +45,15 @@ macro_rules! field_impl {
         */
 		
         impl $name {
+            // #[cfg(feature = "alloc")]
             pub fn from_str(s: &str) -> Option<Self> {
+                #[cfg(feature = "alloc")]
                 let ints: Vec<_> = {
+                    let mut acc = Self::zero();
+                    (0..11).map(|_| {let tmp = acc; acc = acc + Self::one(); tmp}).collect()
+                };
+                #[cfg(not(feature = "alloc"))]
+                let ints: heapless::Vec<_, heapless::consts::U32> = {
                     let mut acc = Self::zero();
                     (0..11).map(|_| {let tmp = acc; acc = acc + Self::one(); tmp}).collect()
                 };

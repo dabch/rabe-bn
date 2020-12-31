@@ -1,3 +1,7 @@
+// #[cfg(not(feature = "std"))]
+// #[macro_use]
+// extern crate std;
+
 use rand::Rng;
 use rand::rngs::StdRng;
 use rand::SeedableRng;

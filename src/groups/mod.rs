@@ -1,7 +1,10 @@
-use std::ops::{Add, Sub, Neg, Mul};
+#[cfg(feature = "alloc")]
+pub use alloc::vec::Vec;
+
+use core::ops::{Add, Sub, Neg, Mul};
 use fields::{FieldElement, Fq, Fq2, Fq12, Fr, const_fq, fq2_nonresidue};
 use arith::U256;
-use std::fmt;
+use core::fmt;
 use rand::Rng;
 
 use serde::ser::Serialize;
@@ -594,7 +597,10 @@ pub struct EllCoeffs {
 #[derive(PartialEq, Eq)]
 pub struct G2Precomp {
     pub q: AffineG<G2Params>,
+    #[cfg(feature = "std")]
     pub coeffs: Vec<EllCoeffs>,
+    #[cfg(not(feature = "std"))]
+    pub coeffs: heapless::Vec<EllCoeffs, heapless::consts::U64>,
 }
 
 impl G2Precomp {
@@ -681,8 +687,12 @@ impl AffineG<G2Params> {
 
     pub fn precompute(&self) -> G2Precomp {
         let mut r = self.to_jacobian();
-
+        
+        #[cfg(feature = "alloc")]
         let mut coeffs = Vec::with_capacity(102);
+        #[cfg(not(feature = "alloc"))]
+        let mut coeffs: heapless::Vec<_, heapless::consts::U64> = heapless::Vec::new();//with_capacity(102);
+
 
         let mut found_one = false;
 
@@ -763,7 +773,12 @@ impl G2 {
 }
 
 #[test]
+
+#[cfg(feature = "std")]
 fn test_prepared_g2() {
+    extern crate std;
+    use std::vec;
+    
     let g2 = G2::one() *
         Fr::from_str(
             "20390255904278144451778773028944684152769293537511418234311120800877067946",
@@ -979,6 +994,9 @@ fn test_reduced_pairing() {
 
 #[test]
 fn test_binlinearity() {
+    #[cfg(not(feature = "std"))]
+    extern crate std;
+    
     use rand::SeedableRng;
     use rand::rngs::StdRng;
     use std::time::SystemTime;

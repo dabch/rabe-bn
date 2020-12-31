@@ -1,4 +1,7 @@
-use std::cmp::Ordering;
+#[cfg(feature = "alloc")]
+pub use alloc::{string::String, vec::Vec, format};
+
+use core::cmp::Ordering;
 use rand::Rng;
 use core::fmt;
 use byteorder::{ByteOrder, BigEndian};
@@ -96,11 +99,21 @@ impl U512 {
 }
 
 impl fmt::Display for U256 {
+    #[cfg(feature = "alloc")]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut str = String::new();
         for tup in self.0.iter() {
             str.push_str(format!("{:#X?}", tup).as_ref())
         }
+        write!(f, "{:?}", str)
+    }
+
+    #[cfg(not(feature = "alloc"))]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut str: heapless::String<heapless::consts::U2048> = heapless::String::new();
+        // for tup in self.0.iter() {
+        //     str.push_str(format!("{:#X?}", tup).as_ref());
+        // }
         write!(f, "{:?}", str)
     }
 }

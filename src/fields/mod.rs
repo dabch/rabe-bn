@@ -5,8 +5,8 @@ mod fq12;
 
 use arith::U256;
 use rand::Rng;
-use std::ops::{Add, Sub, Mul, Neg};
-use std::fmt::Debug;
+use core::ops::{Add, Sub, Mul, Neg};
+use core::fmt::Debug;
 
 pub use self::fp::{Fq,Fr,const_fq};
 pub use self::fq2::{Fq2, fq2_nonresidue};
@@ -48,6 +48,8 @@ pub trait FieldElement: Sized
 
 #[cfg(test)]
 mod tests;
+#[cfg(test)]
+extern crate std;
 
 #[test]
 fn test_fr() {
