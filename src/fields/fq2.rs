@@ -110,7 +110,7 @@ impl FieldElement for Fq2 {
         }
     }
 
-    fn random<R: Rng>(rng: &mut R) -> Self {
+    fn random<R: Rng + ?Sized>(rng: &mut R) -> Self {
         Fq2 {
             c0: Fq::random(rng),
             c1: Fq::random(rng),

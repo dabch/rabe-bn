@@ -47,7 +47,7 @@ impl U512 {
     }
 
     /// Get a random U512
-    pub fn random<R: Rng>(rng: &mut R) -> U512 {
+    pub fn random<R: Rng + ?Sized>(rng: &mut R) -> U512 {
         U512(rng.gen())
     }
 
@@ -152,7 +152,7 @@ impl U256 {
     }
 
     /// Produce a random number (mod `modulo`)
-    pub fn random<R: Rng>(rng: &mut R, modulo: &U256) -> U256 {
+    pub fn random<R: Rng + ?Sized>(rng: &mut R, modulo: &U256) -> U256 {
         U512::random(rng).divrem(modulo).1
     }
 

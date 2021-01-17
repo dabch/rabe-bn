@@ -23,7 +23,7 @@ pub trait GroupElement
     + Mul<Fr, Output = Self> {
     fn zero() -> Self;
     fn one() -> Self;
-    fn random<R: Rng>(rng: &mut R) -> Self;
+    fn random<R: Rng + ?Sized>(rng: &mut R) -> Self;
     fn is_zero(&self) -> bool;
     fn double(&self) -> Self;
 }
@@ -231,7 +231,7 @@ impl<P: GroupParams> GroupElement for G<P> {
         P::one()
     }
 
-    fn random<R: Rng>(rng: &mut R) -> Self {
+    fn random<R: Rng + ?Sized>(rng: &mut R) -> Self {
         P::one() * Fr::random(rng)
     }
 
@@ -600,7 +600,7 @@ pub struct G2Precomp {
     #[cfg(feature = "std")]
     pub coeffs: Vec<EllCoeffs>,
     #[cfg(not(feature = "std"))]
-    pub coeffs: heapless::Vec<EllCoeffs, heapless::consts::U64>,
+    pub coeffs: heapless::Vec<EllCoeffs, heapless::consts::U256>,
 }
 
 impl G2Precomp {
@@ -691,7 +691,7 @@ impl AffineG<G2Params> {
         #[cfg(feature = "alloc")]
         let mut coeffs = Vec::with_capacity(102);
         #[cfg(not(feature = "alloc"))]
-        let mut coeffs: heapless::Vec<_, heapless::consts::U64> = heapless::Vec::new();//with_capacity(102);
+        let mut coeffs: heapless::Vec<_, heapless::consts::U256> = heapless::Vec::new();//with_capacity(102);
 
 
         let mut found_one = false;

@@ -107,7 +107,7 @@ macro_rules! field_impl {
                 $name(U256($one))
             }
             
-            fn random<R: Rng>(rng: &mut R) -> Self {
+            fn random<R: Rng + ?Sized>(rng: &mut R) -> Self {
                 $name(U256::random(rng, &U256($modulus)))
             }
 
