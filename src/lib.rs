@@ -31,7 +31,7 @@ use serde::ser::Serialize;
 use serde::de::DeserializeOwned;
 use core::fmt::{self, Debug};
 
-pub use fields::Fq;
+use fields::Fq;
 
 #[derive(Copy, Clone, PartialEq, Eq, Serialize, Deserialize, Debug)]
 #[repr(C)]
