@@ -600,7 +600,7 @@ pub struct G2Precomp {
     #[cfg(feature = "std")]
     pub coeffs: Vec<EllCoeffs>,
     #[cfg(not(feature = "std"))]
-    pub coeffs: heapless::Vec<EllCoeffs, heapless::consts::U256>,
+    pub coeffs: heapless::Vec<EllCoeffs, heapless::consts::U102>,
 }
 
 impl G2Precomp {
@@ -691,7 +691,7 @@ impl AffineG<G2Params> {
         #[cfg(feature = "alloc")]
         let mut coeffs = Vec::with_capacity(102);
         #[cfg(not(feature = "alloc"))]
-        let mut coeffs: heapless::Vec<_, heapless::consts::U256> = heapless::Vec::new();//with_capacity(102);
+        let mut coeffs: heapless::Vec<_, heapless::consts::U102> = heapless::Vec::new();
 
 
         let mut found_one = false;
