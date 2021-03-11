@@ -3,7 +3,7 @@ pub use alloc::{string::String, vec::Vec, format};
 
 use core::cmp::Ordering;
 use rand::Rng;
-use core::fmt;
+use core::fmt::{self, Write};
 use byteorder::{ByteOrder, BigEndian};
 
 /// 256-bit, stack allocated biginteger for use in prime field
@@ -111,9 +111,10 @@ impl fmt::Display for U256 {
     #[cfg(not(feature = "alloc"))]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut str: heapless::String<heapless::consts::U2048> = heapless::String::new();
-        // for tup in self.0.iter() {
-        //     str.push_str(format!("{:#X?}", tup).as_ref());
-        // }
+        for tup in self.0.iter() {
+            // str.push_str(format!("{:#X?}", tup).as_ref());
+            write!(str, "{:#X?}", tup);
+        }
         write!(f, "{:?}", str)
     }
 }

@@ -47,7 +47,7 @@ pub struct G<P: GroupParams> {
     z: P::Base,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct AffineG<P: GroupParams> {
     x: P::Base,
     y: P::Base,
@@ -398,6 +398,7 @@ impl GroupParams for G1Params {
 
 pub type G1 = G<G1Params>;
 
+#[derive(Debug)]
 pub struct G2Params;
 
 impl GroupParams for G2Params {
@@ -587,14 +588,14 @@ fn twist_mul_by_q_y() -> Fq2 {
     )
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct EllCoeffs {
     pub ell_0: Fq2,
     pub ell_vw: Fq2,
     pub ell_vv: Fq2,
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct G2Precomp {
     pub q: AffineG<G2Params>,
     #[cfg(feature = "std")]
@@ -703,7 +704,10 @@ impl AffineG<G2Params> {
                 continue;
             }
 
+            #[cfg(feature = "alloc")]
             coeffs.push(r.doubling_step_for_flipped_miller_loop());
+            #[cfg(not(feature = "alloc"))]
+            coeffs.push(r.doubling_step_for_flipped_miller_loop()).expect("too little space in heapless vector");
 
             if i {
                 coeffs.push(r.mixed_addition_step_for_flipped_miller_loop(self));
