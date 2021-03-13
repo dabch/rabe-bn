@@ -105,6 +105,20 @@ impl From<u64> for Fr {
     }
 }
 
+impl From<i8> for Fr {
+    fn from(val: i8) -> Self {
+        let mut acc = Fr::zero();
+        for _ in 0..val.abs() {
+            acc = acc + Fr::one();
+        }
+
+        if val < 0 {
+            acc = acc.inverse().unwrap();
+        }
+        acc
+    }
+}
+
 impl Distribution<crate::fields::Fr> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> crate::fields::Fr {
         #[cfg(feature = "alloc")]
