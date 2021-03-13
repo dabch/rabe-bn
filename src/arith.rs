@@ -110,12 +110,10 @@ impl fmt::Display for U256 {
 
     #[cfg(not(feature = "alloc"))]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut str: heapless::String<heapless::consts::U2048> = heapless::String::new();
+        write!(f, "\"")?; // we want to be 100% equivalent to the "std" implementation. Therefore add the quotes (these are created by the "{:?}" format of str, see above)
         for tup in self.0.iter() {
-            // str.push_str(format!("{:#X?}", tup).as_ref());
-            write!(str, "{:#X?}", tup);
-        }
-        write!(f, "{:?}", str)
+            write!(f, "{:#X?}", tup)?        }
+        write!(f, "\"")
     }
 }
 
