@@ -718,15 +718,24 @@ impl AffineG<G2Params> {
             coeffs.push(r.doubling_step_for_flipped_miller_loop()).expect("too little space in heapless vector");
 
             if i {
+                #[cfg(feature = "alloc")]
                 coeffs.push(r.mixed_addition_step_for_flipped_miller_loop(self));
+                #[cfg(not(feature = "alloc"))]
+                coeffs.push(r.mixed_addition_step_for_flipped_miller_loop(self)).unwrap();
             }
         }
-
         let q1 = self.mul_by_q();
         let q2 = -(q1.mul_by_q());
 
-        coeffs.push(r.mixed_addition_step_for_flipped_miller_loop(&q1));
-        coeffs.push(r.mixed_addition_step_for_flipped_miller_loop(&q2));
+
+        #[cfg(feature = "alloc")] {
+            coeffs.push(r.mixed_addition_step_for_flipped_miller_loop(&q1));
+            coeffs.push(r.mixed_addition_step_for_flipped_miller_loop(&q2));
+        }
+        #[cfg(not(feature = "alloc"))] {
+            coeffs.push(r.mixed_addition_step_for_flipped_miller_loop(&q1)).unwrap();
+            coeffs.push(r.mixed_addition_step_for_flipped_miller_loop(&q2)).unwrap();
+        }
 
         G2Precomp {
             q: *self,
