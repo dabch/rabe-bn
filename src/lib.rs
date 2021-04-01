@@ -312,6 +312,12 @@ impl Distribution<G2> for Standard {
     }
 }
 
+impl fmt::Display for G2 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
 #[derive(Copy, Clone, PartialEq, Eq, Serialize, Deserialize, Debug)]
 #[repr(C)]
 pub struct Gt(fields::Fq12);

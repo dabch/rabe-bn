@@ -3,7 +3,7 @@ pub use alloc::{string::String, vec::Vec, format};
 
 use core::cmp::Ordering;
 use rand::Rng;
-use core::fmt::{self, Write};
+use core::fmt;
 use byteorder::{ByteOrder, BigEndian};
 
 /// 256-bit, stack allocated biginteger for use in prime field
