@@ -61,6 +61,9 @@ impl Fr {
     pub fn interpret(buf: &[u8; 64]) -> Fr {
         Fr(fields::Fr::interpret(buf))
     }
+    pub fn uninterpret(&self) -> [u8; 64] {
+        self.0.uninterpret()
+    }
 }
 
 impl Add<Fr> for Fr {

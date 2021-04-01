@@ -89,6 +89,16 @@ macro_rules! field_impl {
                 $name::new(U512::interpret(buf).divrem(&U256($modulus)).1).unwrap()
             }
 
+            pub fn uninterpret(&self) -> [u8; 64] {
+                let mut res = [0; 64];
+                for (i, x) in self.0.0.iter().enumerate() {
+                    for (j, u_8) in x.to_be_bytes().iter().enumerate() {
+                        res[8*i + j] = *u_8;
+                    }
+                }
+                res
+            }
+
             /// Returns the modulus
             #[inline]
             pub fn modulus() -> U256 {
